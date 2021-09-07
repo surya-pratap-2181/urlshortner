@@ -1,21 +1,27 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
-    <h1>Register</h1>
+{% extends 'core/base.html' %}
+{% block title %}SignUp {% endblock title %}
+{% block body %}
+<div class="container-fluid my-2">
+{% if messages %}
+    {% for message in messages %}
+    <div {% if message.tags %} class="alert alert-{{ message.tags }} alert-dismissible fade show" {% endif %}
+        role="alert">
+        <strong>{{ message }}</strong><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span
+                aria-hidden="true">&times;</span></button>
+    </div>
+    {% endfor %}
+    {% endif %}
+</div>
+<div class="container card p-5">
+<h1>SignUp</h1>
 
 <form action="{% url 'register' %}" method="post">
   {% csrf_token %}
   {% for fm  in form %}
-    {{fm.label_tag}} {{fm}} {{fm.errors|striptags}} <br> <br>
+    {{fm.label_tag}} {{fm}} {{fm.errors|striptags}}<br>
   {% endfor %}
-  <button type="submit" id="submit">Register</button>
-  <button><a href="{% url 'login' %}">Login</a></button>
+  <button class="btn btn-success" type="submit" id="submit">SignUp</button>
+  <a class="btn btn-info" href="{% url 'login' %}">Login</a>
 </form>
-</body>
-</html>
+</div>
+{% endblock body %}

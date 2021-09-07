@@ -1,32 +1,91 @@
-from django.shortcuts import render
-import requests
+from django.contrib import messages
+from django.shortcuts import redirect, render
+from .models import ShortURL
+from django.db.models import Sum
+import random
+import string
 
 # Create your views here.
 
 
-def home(request):
-    return render(request, 'core/short.html', {'shorted_url': 'Your Response Will appear Here...'})
-
-
-def shortner(request):
-    if request.method == "POST":
-        url = request.POST['url']
-        access_token = "a9567bd55bf10f122a13dcf5e53f47c11b723fee"
-        guid = "Bl8qcKchi0h"
-        headers = {"Authorization": f"Bearer {access_token}"}
-        # url = ""
-        shorten_res = requests.post("https://api-ssl.bitly.com/v4/shorten",
-                                    json={"group_guid": guid, "long_url": url}, headers=headers)
-        if shorten_res.status_code == 200:
-            # if response is OK, get the shortened URL
-            link = shorten_res.json().get("link")
-            print("Shortened URL:", link)
-            shorted_url = link
-            return render(request, 'core/short.html', {'shorted_url': shorted_url})
-        else:
-            print("Not Getting the shortened url")
-            shorted_url = "Not Getting the shortened url"
-            return render(request, 'core/short.html', {'shorted_url': shorted_url})
+def home(request, query=None):
+    if not query or query is None:
+        return render(request, 'core/home.html')
     else:
-        shorted_url = "Your Response Will appear Here..."
-    return render(request, 'core/short.html', {'shorted_url': shorted_url})
+        try:
+            check = ShortURL.objects.get(short_query=query)
+            check.visits += 1
+            check.save()
+            return redirect(check.original_url)
+        except ShortURL.DoesNotExist:
+            messages.error(request, "URL does not exist")
+            return render(request, 'core/home.html')
+
+    # return render(request, 'core/home.html')
+
+
+def dashboard(request):
+    if request.user.is_anonymous:
+        messages.info(request, 'Login required!!')
+        return redirect('/accounts/')
+    person = ShortURL.objects.filter(user=request.user)
+    total = person.aggregate(Sum('visits'))
+    visits = total.get('visits__sum')
+    return render(request, 'core/dashboard.html', {'user': person, 'visits': visits})
+
+
+def random_query():
+    return ''.join(random.choice(string.ascii_lowercase) for _ in range(6))
+
+
+def short_url(request):
+    if request.user.is_anonymous:
+        messages.info(request, 'Login required!!')
+        return redirect('/accounts/')
+    if request.method == "POST":
+        if request.POST['url'] and request.POST['short']:
+            usr = request.user
+            original_url = request.POST['url']
+            short_query = request.POST['short']
+            check = ShortURL.objects.filter(short_query=short_query)
+            if not check:
+                newurl = ShortURL(
+                    user=usr,
+                    original_url=original_url,
+                    short_query=short_query,
+                )
+                newurl.save()
+                messages.success(request, "Your URL is generated")
+                # return redirect("/")
+                newquery = ShortURL.objects.last().short_query
+                myurl = "http://127.0.0.1:8000/" + newquery
+                return render(request, 'core/shorturl.html', {'myurl': myurl})
+            else:
+                messages.error(request, "Already Exists")
+                return redirect('/shorturl/')
+        elif request.POST['url']:
+            # generate random url as short url is not set
+            usr = request.user
+            original_url = request.POST['url']
+            generated = False
+            while not generated:
+                short_query = random_query()
+                check = ShortURL.objects.filter(short_query=short_query)
+                if not check:
+                    newurl = ShortURL(
+                        user=usr,
+                        original_url=original_url,
+                        short_query=short_query,
+                    )
+                    newurl.save()
+                    messages.success(request, "Your URL is generated")
+                    newquery = ShortURL.objects.last().short_query
+                    myurl = "http://127.0.0.1:8000/" + newquery
+                    return render(request, 'core/shorturl.html', {'myurl': myurl})
+                else:
+                    continue
+        else:
+            # If Didn't Provide a url
+            messages.error(request, "Please Provide a Link")
+            return redirect('/shorturl')
+    return render(request, 'core/shorturl.html', {'myurl': "Short URL appear here"})

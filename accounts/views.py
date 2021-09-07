@@ -19,8 +19,11 @@ class RegisterView(generic.CreateView):
     template_name = 'accounts/register.html'
     success_url = reverse_lazy('login')
 
+
 def profile_page(request):
-    return render(request, 'accounts/profile.html')
+    return redirect('/shorturl/')
+    # return render(request, 'accounts/profile.html')
+
 
 def user_logout(request):
     logout(request)

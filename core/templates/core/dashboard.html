@@ -1,0 +1,50 @@
+{% extends 'core/base.html' %}
+{% block title %}Dashboard {% endblock title %}
+{% block body %}
+<div class="container-fluid">
+    {% if messages %}
+    {% for message in messages %}
+    <div {% if message.tags %} class="alert alert-{{ message.tags }} alert-dismissible fade show" {% endif %}
+        role="alert">
+        <strong>{{ message }}</strong><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span
+                aria-hidden="true">&times;</span></button>
+    </div>
+    {% endfor %}
+    {% endif %}
+</div>
+<div class="container">
+    <h1 class="text-center">Dashboard Page</h1>
+
+    <div class="row text-center">
+        <div class="col-md-4"><a href="#" class="btn btn-primary btn-lg disabled" tabindex="-1" role="button"
+                aria-disabled="true"> Links <span class="badge badge-dark">{{user.count}}</span></a> </div>
+        <div class="col-md-4"><a href="#" class="btn btn-info btn-lg disabled" tabindex="-1" role="button"
+                aria-disabled="true">Total Visits <span class="badge badge-light">{{visits}}</span></a></div>
+        <div class="col-md-4"><a href="#" class="btn btn-warning btn-lg disabled" tabindex="-1" role="button"
+                aria-disabled="true"> Invites <span class="badge badge-light">coming soon</span></a></div>
+    </div>
+    <div class="container my-3">
+        <table class="table table-dark text-center">
+            <thead>
+                <tr>
+                    <th scope="col">Sr.No.</th>
+                    <th scope="col">Original Links</th>
+                    <th scope="col">Shortened Links</th>
+                    <th scope="col">Visits</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for url in user %}
+                <tr>
+                    <th scope="row">{{forloop.counter}}</th>
+                    <td><a class="text-light" href="{{url.original_url}}">{{url.original_url}}</a> </td>
+                    <td><a class="text-light" href="http://127.0.0.1:8000/{{url.short_query}}">http://127.0.0.1:8000/{{url.short_query}}</a> </td>
+                    <td><span class="badge badge-light p-2">{{url.visits}}</span></td>
+                </tr>
+            {% endfor %}
+
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock body %}
