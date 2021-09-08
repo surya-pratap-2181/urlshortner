@@ -12,9 +12,11 @@
       <li class="nav-item">
         <a class="nav-link" href="{% url 'shorturl' %}">Short URL</a>
       </li>
+      {% if user.is_authenticated %}
       <li class="nav-item">
         <a class="nav-link" href="{% url 'dashboard' %}">Dashboard</a>
       </li>
+      {% endif %}
     </ul>
     {% if user.is_authenticated %}
     <span class="badge badge-light p-2 mx-3">{{request.user}}</span>

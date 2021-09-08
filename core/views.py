@@ -28,10 +28,11 @@ def dashboard(request):
     if request.user.is_anonymous:
         messages.info(request, 'Login required!!')
         return redirect('/accounts/')
-    person = ShortURL.objects.filter(user=request.user)
-    total = person.aggregate(Sum('visits'))
-    visits = total.get('visits__sum')
-    return render(request, 'core/dashboard.html', {'user': person, 'visits': visits})
+    else:
+        person = ShortURL.objects.filter(user=request.user)
+        total = person.aggregate(Sum('visits'))
+        visits = total.get('visits__sum')
+        return render(request, 'core/dashboard.html', {'usr': person, 'visits': visits})
 
 
 def random_query():
@@ -87,5 +88,5 @@ def short_url(request):
         else:
             # If Didn't Provide a url
             messages.error(request, "Please Provide a Link")
-            return redirect('/shorturl')
+            return redirect('/shorturl/')
     return render(request, 'core/shorturl.html', {'myurl': "Short URL appear here"})
