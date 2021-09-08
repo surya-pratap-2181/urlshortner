@@ -1,4 +1,5 @@
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect, render
 from .models import ShortURL
 from django.db.models import Sum
@@ -24,6 +25,7 @@ def home(request, query=None):
     # return render(request, 'core/home.html')
 
 
+@login_required(login_url='/accounts/')
 def delete_url(request, id):
     url = ShortURL.objects.get(id=id)
     url.delete()
