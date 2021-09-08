@@ -12,11 +12,14 @@ class RegisterForm(UserCreationForm):
     class Meta:
         model = get_user_model()
         fields = ('username', 'email', 'mobile_number', 'password1',
-                  'password2',)
+                  'password2', 'invite_query', 'invited_by', 'coin')
         widgets = {
             'username': forms.TextInput(attrs={'class': 'form-control'}),
             'email': forms.TextInput(attrs={'class': 'form-control'}),
             'mobile_number': forms.TextInput(attrs={'class': 'form-control'}),
+            'inivite_query': forms.HiddenInput(),
+            'inivited_by': forms.HiddenInput(),
+            'coin': forms.HiddenInput(),
         }
 
 

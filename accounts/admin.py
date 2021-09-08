@@ -14,6 +14,7 @@ class UserAdmin(DjangoUserAdmin):
         (None, {'fields': ('username', 'email', 'password')}),
         (_('Personal info'), {'fields': ('first_name', 'last_name')}),
         (_('Personal Details'), {'fields': ('mobile_number',)}),
+        (_('Money'), {'fields': ('invite_query', 'invited_by', 'coin')}),
         (_('Permissions'), {'fields': ('is_active', 'is_staff', 'is_superuser',
                                        'groups', 'user_permissions')}),
         (_('Important dates'), {'fields': ('last_login', 'date_joined')}),
