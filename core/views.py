@@ -24,6 +24,12 @@ def home(request, query=None):
     # return render(request, 'core/home.html')
 
 
+def delete_url(request, id):
+    url = ShortURL.objects.get(id=id)
+    url.delete()
+    return redirect('/dashboard/')
+
+
 def dashboard(request):
     if request.user.is_anonymous:
         messages.info(request, 'Login required!!')

@@ -17,7 +17,7 @@
 
     <div class="row text-center">
         <div class="col-md-4"><a href="#" class="btn btn-primary btn-lg disabled" tabindex="-1" role="button"
-                aria-disabled="true"> Links <span class="badge badge-dark">{{user.count}}</span></a> </div>
+                aria-disabled="true"> Links <span class="badge badge-dark">{{usr.count}}</span></a> </div>
         <div class="col-md-4"><a href="#" class="btn btn-info btn-lg disabled" tabindex="-1" role="button"
                 aria-disabled="true">Total Visits <span class="badge badge-light">{{visits}}</span></a></div>
         <div class="col-md-4"><a href="#" class="btn btn-warning btn-lg disabled" tabindex="-1" role="button"
@@ -31,6 +31,7 @@
                     <th scope="col">Original Links</th>
                     <th scope="col">Shortened Links</th>
                     <th scope="col">Visits</th>
+                    <th scope="col">Action</th>
                 </tr>
             </thead>
             <tbody>
@@ -40,6 +41,7 @@
                     <td><a class="text-light" href="{{url.original_url}}">{{url.original_url}}</a> </td>
                     <td><a class="text-light" href="http://127.0.0.1:8000/{{url.short_query}}">http://127.0.0.1:8000/{{url.short_query}}</a> </td>
                     <td><span class="badge badge-light p-2">{{url.visits}}</span></td>
+                    <td><a class="btn btn-danger" href="{% url 'delete_url' url.id %}">Delete</a> </td>
                 </tr>
             {% endfor %}
 
